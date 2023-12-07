@@ -1,0 +1,27 @@
+# Mybatis-NumberFormatException이 나는 이유
+
+Mybatis 사용중에 다음과 같은 에러가 나왔다.
+
+```bash
+Caused by: org.apache.ibatis.exceptions.PersistenceException: 
+### Error querying database.  Cause: java.lang.NumberFormatException: For input string: "n"
+### Cause: java.lang.NumberFormatException: For input string: "n"
+```
+
+문제가 있던 코드는 쿼리는 아래였다.
+```bash
+SELECT *
+FROM tb_test
+WHERE tranDat BETWEEN '20231204' AND '20231206'
+<if test="isGAT=='n'">
+ AND code = 'GAT'
+</if>
+```
+
+구글링 해보니 OGNL 인터프리터에서는 'n'을 char형으로 인식하는것 같다. 근데 'nn'이나 "N"은 또 String으로 인식한다.
+그래서 따옴표를 다음과 같이 바꿔주었다
+
+
+```bash
+<if test='isGAT=="n"'>
+```
